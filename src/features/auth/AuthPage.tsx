@@ -88,22 +88,24 @@ export function AuthPage() {
 
         <div className='relative z-10 max-w-xl space-y-6'>
           <h1 className='font-headline text-5xl font-extrabold leading-tight tracking-tight'>
-            The Precision Ledger for modern wealth.
+            Stay on top of your money, every day.
           </h1>
           <p className='text-xl font-medium text-blue-100/90'>
-            Experience an authoritative interface designed for high-net-worth
-            clarity and absolute fiscal control.
+            Track spending, monitor budgets, and plan ahead with a clean and
+            reliable finance workspace.
           </p>
           <div className='grid grid-cols-2 gap-4 pt-8'>
             <div className='rounded-xl border border-white/15 bg-white/5 p-6 backdrop-blur-md'>
               <ShieldCheck className='mb-3 h-6 w-6 text-emerald-300' />
-              <h3 className='font-semibold'>Bank-Grade</h3>
-              <p className='text-sm text-blue-100/70'>Encrypted ledger tech</p>
+              <h3 className='font-semibold'>Secure Session</h3>
+              <p className='text-sm text-blue-100/70'>Protected login state</p>
             </div>
             <div className='rounded-xl border border-white/15 bg-white/5 p-6 backdrop-blur-md'>
               <Sparkles className='mb-3 h-6 w-6 text-emerald-300' />
-              <h3 className='font-semibold'>Analytics Ready</h3>
-              <p className='text-sm text-blue-100/70'>Predictive cashflow</p>
+              <h3 className='font-semibold'>Clear Insights</h3>
+              <p className='text-sm text-blue-100/70'>
+                Trends, reports, and goals
+              </p>
             </div>
           </div>
         </div>
@@ -111,7 +113,7 @@ export function AuthPage() {
         <div className='relative z-10 flex items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-blue-100/50'>
           <span>Finance Tracker</span>
           <span className='h-1 w-1 rounded-full bg-blue-100/50' />
-          <span>Global Asset Mgmt</span>
+          <span>Personal Finance</span>
         </div>
 
         <div className='absolute inset-0 opacity-15'>
@@ -134,12 +136,12 @@ export function AuthPage() {
 
           <div className='mb-8'>
             <h2 className='font-headline text-4xl font-extrabold tracking-tight'>
-              {mode === "login" ? "Welcome Back" : "Create Account"}
+              {mode === "login" ? "Welcome back" : "Create your account"}
             </h2>
             <p className='mt-2 text-text-secondary'>
               {mode === "login"
-                ? "Access your global portfolio with precision."
-                : "Set up your Precision Ledger workspace."}
+                ? "Sign in to continue to your dashboard."
+                : "Register to start tracking your finances."}
             </p>
           </div>
 
@@ -149,14 +151,14 @@ export function AuthPage() {
               className={`flex-1 rounded-lg py-2.5 text-sm font-bold transition ${mode === "login" ? "bg-editorial text-white shadow-soft" : "text-text-secondary hover:text-text-primary"}`}
               onClick={() => setMode("login")}
             >
-              Login
+              Sign In
             </button>
             <button
               type='button'
               className={`flex-1 rounded-lg py-2.5 text-sm font-bold transition ${mode === "register" ? "bg-editorial text-white shadow-soft" : "text-text-secondary hover:text-text-primary"}`}
               onClick={() => setMode("register")}
             >
-              Register
+              Sign Up
             </button>
           </div>
 
@@ -173,7 +175,7 @@ export function AuthPage() {
                 <input
                   id='email'
                   type='email'
-                  placeholder='name@firm.com'
+                  placeholder='name@example.com'
                   className='w-full rounded-xl border border-surface-border bg-surface px-4 py-3.5 pl-12 font-medium outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20'
                   {...form.register("email")}
                 />
@@ -237,8 +239,8 @@ export function AuthPage() {
               {mutation.isPending
                 ? "Please wait..."
                 : mode === "login"
-                  ? "Sign In to Ledger"
-                  : "Create Ledger Account"}
+                  ? "Sign In"
+                  : "Create Account"}
               <ArrowRight className='h-4 w-4' />
             </button>
           </form>
