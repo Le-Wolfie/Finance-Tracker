@@ -64,7 +64,7 @@ export function AuthPage() {
     },
     onSuccess: (data) => {
       setSubmissionError(null);
-      setAuth(data.token, data.expiresAt);
+      setAuth(data.token, data.expiresAt, form.getValues("email").trim());
       navigate("/dashboard", { replace: true });
     },
     onError: (error) => {
