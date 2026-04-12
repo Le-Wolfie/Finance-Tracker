@@ -58,6 +58,7 @@ export function ReportsPage() {
   const accountBalanceData = (dashboardData?.accounts ?? [])
     .slice(0, 8)
     .map((account) => ({
+      fullName: account.name,
       name:
         account.name.length > 14
           ? `${account.name.slice(0, 14)}...`
@@ -68,6 +69,7 @@ export function ReportsPage() {
   const budgetUsageData = (dashboardData?.budgetAlerts ?? [])
     .slice(0, 8)
     .map((budget) => ({
+      fullName: budget.categoryName,
       name:
         budget.categoryName.length > 14
           ? `${budget.categoryName.slice(0, 14)}...`
@@ -178,7 +180,9 @@ export function ReportsPage() {
                 <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
                 <XAxis dataKey='name' />
                 <YAxis />
-                <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                <Tooltip
+                  formatter={(value) => formatCurrency(Number(value ?? 0))}
+                />
                 <Bar dataKey='value' radius={[6, 6, 0, 0]}>
                   <Cell fill='#10b981' />
                   <Cell fill='#ef4444' />
@@ -216,7 +220,7 @@ export function ReportsPage() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(value)}
+                      formatter={(value) => formatCurrency(Number(value ?? 0))}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -228,7 +232,12 @@ export function ReportsPage() {
                     className='rounded-lg border border-surface-border bg-surface-muted p-2 text-sm'
                   >
                     <div className='mb-1 flex items-center justify-between gap-2'>
-                      <span className='font-semibold'>{item.categoryName}</span>
+                      <span
+                        title={item.categoryName}
+                        className='max-w-[190px] truncate font-semibold'
+                      >
+                        {item.categoryName}
+                      </span>
                       <span>{formatCurrency(item.amount)}</span>
                     </div>
                     <div className='h-1.5 rounded-full bg-surface-border'>
@@ -263,7 +272,12 @@ export function ReportsPage() {
                 <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
                 <XAxis dataKey='name' />
                 <YAxis />
-                <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                <Tooltip
+                  formatter={(value) => formatCurrency(Number(value ?? 0))}
+                  labelFormatter={(label, payload) =>
+                    String(payload?.[0]?.payload?.fullName ?? label)
+                  }
+                />
                 <Bar dataKey='balance' fill='#3b82f6' radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -284,7 +298,10 @@ export function ReportsPage() {
                 <XAxis dataKey='name' />
                 <YAxis domain={[0, 120]} />
                 <Tooltip
-                  formatter={(value: number) => `${value.toFixed(2)}%`}
+                  formatter={(value) => `${Number(value ?? 0).toFixed(2)}%`}
+                  labelFormatter={(label, payload) =>
+                    String(payload?.[0]?.payload?.fullName ?? label)
+                  }
                 />
                 <Bar
                   dataKey='usagePercent'
@@ -355,7 +372,12 @@ export function ReportsPage() {
                   className='rounded-xl border border-surface-border bg-surface-muted p-3 text-sm'
                 >
                   <div className='flex items-center justify-between gap-2'>
-                    <span className='font-semibold'>{item.name}</span>
+                    <span
+                      title={item.name}
+                      className='max-w-[220px] truncate font-semibold'
+                    >
+                      {item.name}
+                    </span>
                     <span
                       className={
                         item.type === 1
