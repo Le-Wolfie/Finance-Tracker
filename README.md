@@ -2,9 +2,6 @@
 
 Finance Tracker is a full-stack personal finance app with a .NET API and a React frontend.
 
-This README covers local development only.
-Deployment is not included yet.
-
 ## What This Project Does
 
 You can:
