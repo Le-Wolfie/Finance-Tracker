@@ -35,7 +35,7 @@ const navItems = [
 ];
 
 export function AppShell({ children }: AppShellProps) {
-  const { logout } = useAuth();
+  const { email, logout } = useAuth();
 
   return (
     <div className='min-h-screen bg-background text-text-primary'>
@@ -87,9 +87,13 @@ export function AppShell({ children }: AppShellProps) {
               <span className='flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface text-text-secondary'>
                 <User className='h-5 w-5' />
               </span>
-              <div>
-                <p className='text-sm font-semibold'>Signed-in User</p>
-                <p className='text-xs text-text-muted'>Authenticated Session</p>
+              <div className='min-w-0 flex-1'>
+                <p
+                  className='truncate text-sm font-semibold'
+                  title={email ?? "Signed-in User"}
+                >
+                  {email ?? "Signed-in User"}
+                </p>
               </div>
             </div>
             <button
