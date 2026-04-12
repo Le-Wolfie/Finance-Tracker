@@ -49,9 +49,6 @@ export function AppShell({ children }: AppShellProps) {
               <strong className='font-headline block text-lg font-extrabold'>
                 Finance Tracker
               </strong>
-              <small className='text-xs font-semibold uppercase tracking-[0.18em] text-text-muted'>
-                The Precision Ledger
-              </small>
             </span>
           </Link>
 
@@ -110,7 +107,6 @@ export function AppShell({ children }: AppShellProps) {
         <header className='sticky top-0 z-20 border-b border-surface-border bg-surface/95 backdrop-blur'>
           <div className='mx-auto flex h-16 max-w-[1400px] items-center px-4 lg:px-8'>
             <div className='mx-auto flex w-full max-w-2xl items-center justify-center gap-3'>
-              
               <p className='font-headline w-full text-center text-lg font-black uppercase tracking-[0.22em]'>
                 Finance Tracker
               </p>
