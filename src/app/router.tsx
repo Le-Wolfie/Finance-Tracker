@@ -71,7 +71,7 @@ const RecurringEditorPage = lazy(() =>
   })),
 );
 const ReportsPage = lazy(() =>
-  import("../features/reports/ReportsPage").then((module) => ({
+  import("../features/reports").then((module) => ({
     default: module.ReportsPage,
   })),
 );
