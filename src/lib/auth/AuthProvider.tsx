@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   clearAuthSession,
+  getStoredEmail,
   getStoredExpiry,
   getStoredToken,
   isSessionExpired,
@@ -21,21 +22,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return storedToken;
   });
+  const [email, setEmail] = useState<string | null>(() => getStoredEmail());
 
   const value = useMemo<AuthContextValue>(
     () => ({
       token,
+      email,
       isAuthenticated: Boolean(token),
-      login: (nextToken: string, expiresAt: string) => {
-        setAuthSession(nextToken, expiresAt);
+      login: (nextToken: string, expiresAt: string, nextEmail: string) => {
+        setAuthSession(nextToken, expiresAt, nextEmail);
         setToken(nextToken);
+        setEmail(nextEmail);
       },
       logout: () => {
         clearAuthSession();
         setToken(null);
+        setEmail(null);
       },
     }),
-    [token],
+    [email, token],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
