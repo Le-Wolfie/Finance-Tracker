@@ -167,17 +167,19 @@ export function CategoriesPage() {
           ) : null}
 
           {categories.data ? (
-            <div className='mt-5 grid gap-4 md:grid-cols-2'>
-              <CategoryListCard
-                title={categoryTypeLabel(1)}
-                items={incomeCategories.map((category) => category.name)}
-                accent='bg-emerald-50 text-emerald-700'
-              />
-              <CategoryListCard
-                title={categoryTypeLabel(2)}
-                items={expenseCategories.map((category) => category.name)}
-                accent='bg-rose-50 text-rose-700'
-              />
+            <div className='mt-5 max-h-[65vh] overflow-hidden'>
+              <div className='grid h-full gap-4 overflow-y-auto pr-1 md:grid-cols-2'>
+                <CategoryListCard
+                  title={categoryTypeLabel(1)}
+                  items={incomeCategories.map((category) => category.name)}
+                  accent='bg-emerald-50 text-emerald-700'
+                />
+                <CategoryListCard
+                  title={categoryTypeLabel(2)}
+                  items={expenseCategories.map((category) => category.name)}
+                  accent='bg-rose-50 text-rose-700'
+                />
+              </div>
             </div>
           ) : null}
         </article>
@@ -196,7 +198,7 @@ function CategoryListCard({
   accent: string;
 }) {
   return (
-    <section className='rounded-xl border border-surface-border bg-surface-muted p-4'>
+    <section className='flex h-full flex-col rounded-xl border border-surface-border bg-surface-muted p-4'>
       <div className='mb-3 flex items-center justify-between'>
         <h3 className='text-sm font-bold text-text-primary'>{title}</h3>
         <span
@@ -207,7 +209,7 @@ function CategoryListCard({
       </div>
 
       {items.length ? (
-        <ul className='space-y-2'>
+        <ul className='max-h-[50vh] space-y-2 overflow-y-auto pr-1'>
           {items.map((item) => (
             <li
               key={`${title}-${item}`}
