@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Finance Tracker favicon">
+  <rect width="64" height="64" rx="14" fill="#111827"/>
+  <path d="M12 50h40" stroke="#E5E7EB" stroke-width="3" stroke-linecap="round"/>
+  <rect x="18" y="25" width="28" height="23" rx="3" fill="#2563EB"/>
+  <path d="M22 25h20l-10-10-10 10z" fill="#93C5FD"/>
+  <rect x="30" y="31" width="4" height="12" fill="#E5E7EB"/>
+  <rect x="24" y="35" width="4" height="8" fill="#E5E7EB"/>
+  <rect x="36" y="35" width="4" height="8" fill="#E5E7EB"/>
+</svg>
