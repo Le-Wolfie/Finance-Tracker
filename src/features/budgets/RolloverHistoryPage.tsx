@@ -44,21 +44,21 @@ export function RolloverHistoryPage() {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-wrap items-start justify-between gap-4'>
+      <header className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
         <div>
           <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
             Audit Trail
           </p>
-          <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+          <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
             Budget Rollover History
           </h1>
           <p className='mt-2 text-text-secondary'>{monthLabel(year, month)}</p>
         </div>
 
-        <div className='flex flex-wrap gap-2'>
+        <div className='grid grid-cols-1 gap-2 sm:grid-cols-2'>
           <Link
             to='/budgets'
-            className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary'
+            className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-center text-sm font-semibold text-text-secondary transition hover:text-text-primary'
           >
             Back to Budgets
           </Link>
@@ -74,7 +74,7 @@ export function RolloverHistoryPage() {
       </header>
 
       <section className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
-        <div className='grid gap-3 md:grid-cols-3'>
+        <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
           <select
             value={month}
             onChange={(event) => setMonth(Number(event.target.value))}
@@ -141,7 +141,42 @@ export function RolloverHistoryPage() {
 
       {history.data && history.data.length > 0 ? (
         <section className='rounded-2xl border border-surface-border bg-surface shadow-soft'>
-          <div className='overflow-x-auto'>
+          <div className='space-y-3 p-4 md:hidden'>
+            {history.data.map((record) => (
+              <article
+                key={record.id}
+                className='rounded-xl border border-surface-border bg-surface-muted p-4'
+              >
+                <div className='grid grid-cols-2 gap-2 text-xs text-text-secondary'>
+                  <span>Created</span>
+                  <span className='text-right'>
+                    {formatDate(record.createdAt)}
+                  </span>
+                  <span>Category</span>
+                  <span className='truncate text-right'>
+                    {categoryById.get(record.categoryId) ?? "Unknown Category"}
+                  </span>
+                  <span>From</span>
+                  <span className='text-right'>
+                    {monthLabel(record.fromYear, record.fromMonth)}
+                  </span>
+                  <span>To</span>
+                  <span className='text-right'>
+                    {monthLabel(record.toYear, record.toMonth)}
+                  </span>
+                  <span>Strategy</span>
+                  <span className='text-right'>
+                    {rolloverStrategyLabel(record.appliedStrategy)}
+                  </span>
+                </div>
+                <p className='mt-3 text-sm font-semibold'>
+                  {formatCurrency(record.rolledOverAmount)}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          <div className='hidden overflow-x-auto md:block'>
             <table className='min-w-full text-sm'>
               <thead>
                 <tr className='border-b border-surface-border bg-surface-muted text-left text-xs uppercase tracking-[0.14em] text-text-muted'>
