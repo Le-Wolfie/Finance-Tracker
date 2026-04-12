@@ -147,12 +147,12 @@ export function RecurringPage() {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-wrap items-start justify-between gap-4'>
+      <header className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
         <div>
           <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
             Recurring
           </p>
-          <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+          <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
             Recurring Transactions
           </h1>
           <p className='mt-2 text-text-secondary'>
@@ -162,14 +162,14 @@ export function RecurringPage() {
 
         <Link
           to='/recurring/new'
-          className='rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90'
+          className='w-full rounded-xl bg-primary px-5 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto'
         >
           Create Rule
         </Link>
       </header>
 
       <section className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
-        <div className='grid gap-3 md:grid-cols-3'>
+        <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
           <select
             value={isActiveFilter}
             onChange={(event) => {
@@ -267,7 +267,91 @@ export function RecurringPage() {
 
           {recurring.data && filteredRecurring.length > 0 ? (
             <>
-              <div className='overflow-x-auto'>
+              <div className='space-y-3 p-4 md:hidden'>
+                {paginatedRecurring.map((item) => (
+                  <article
+                    key={item.id}
+                    className='rounded-xl border border-surface-border bg-surface-muted p-4'
+                  >
+                    <div className='flex items-start justify-between gap-3'>
+                      <div className='min-w-0'>
+                        <p className='truncate text-sm font-semibold'>
+                          {item.name}
+                        </p>
+                        <p className='mt-1 truncate text-xs text-text-secondary'>
+                          {item.description || "No description"}
+                        </p>
+                      </div>
+                      <span
+                        className={`text-xs font-semibold ${item.isActive ? "text-success" : "text-text-muted"}`}
+                      >
+                        {item.isActive ? "Active" : "Paused"}
+                      </span>
+                    </div>
+
+                    <div className='mt-3 grid grid-cols-2 gap-2 text-xs text-text-secondary'>
+                      <span>{recurrenceFrequencyLabel(item.frequency)}</span>
+                      <span className='text-right'>
+                        {formatDate(item.nextExecutionDate)}
+                      </span>
+                      <span className='col-span-2 font-semibold text-text-primary'>
+                        {formatCurrency(item.amount)}
+                      </span>
+                    </div>
+
+                    <div className='mt-3 grid grid-cols-2 gap-2'>
+                      <button
+                        type='button'
+                        disabled={isActionPending}
+                        onClick={() => setSelectedRecurringId(item.id)}
+                        className='rounded-lg border border-surface-border bg-surface px-2.5 py-2 text-xs font-semibold text-text-secondary disabled:opacity-60'
+                      >
+                        History
+                      </button>
+                      <Link
+                        to={`/recurring/${item.id}/edit`}
+                        className='rounded-lg border border-surface-border bg-surface px-2.5 py-2 text-center text-xs font-semibold text-text-secondary transition hover:text-text-primary'
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        type='button'
+                        disabled={isActionPending}
+                        onClick={() => handleExecuteNow(item.id)}
+                        className='rounded-lg border border-surface-border bg-surface px-2.5 py-2 text-xs font-semibold text-text-secondary disabled:opacity-60'
+                      >
+                        Execute
+                      </button>
+                      <button
+                        type='button'
+                        disabled={isActionPending}
+                        onClick={() =>
+                          handlePauseResume(item.id, item.isActive)
+                        }
+                        className='rounded-lg border border-surface-border bg-surface px-2.5 py-2 text-xs font-semibold text-text-secondary disabled:opacity-60'
+                      >
+                        {item.isActive ? "Pause" : "Resume"}
+                      </button>
+                      <button
+                        type='button'
+                        disabled={isActionPending}
+                        onClick={() =>
+                          setPendingDelete({
+                            id: item.id,
+                            name: item.name,
+                            amount: item.amount,
+                          })
+                        }
+                        className='col-span-2 rounded-lg border border-danger/40 bg-danger/10 px-2.5 py-2 text-xs font-semibold text-danger transition hover:bg-danger/20 disabled:opacity-60'
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className='hidden overflow-x-auto md:block'>
                 <table className='min-w-full text-sm'>
                   <thead>
                     <tr className='border-b border-surface-border bg-surface-muted text-left text-xs uppercase tracking-[0.14em] text-text-muted'>
@@ -371,12 +455,12 @@ export function RecurringPage() {
                 </table>
               </div>
 
-              <div className='flex items-center justify-between px-4 py-3 text-sm'>
+              <div className='flex flex-col gap-3 px-4 py-3 text-sm md:flex-row md:items-center md:justify-between'>
                 <span className='text-text-secondary'>
                   Page {page} of {totalPages} ({filteredRecurring.length} shown)
                 </span>
                 {totalPages > 1 ? (
-                  <div className='flex gap-2'>
+                  <div className='grid grid-cols-2 gap-2 md:flex'>
                     <button
                       type='button'
                       disabled={page <= 1}

@@ -186,12 +186,12 @@ export function SavingsGoalDetailPage() {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-wrap items-start justify-between gap-3'>
+      <header className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
         <div>
           <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
             Goal Detail
           </p>
-          <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+          <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
             Savings Goal Profile
           </h1>
         </div>
@@ -199,7 +199,7 @@ export function SavingsGoalDetailPage() {
         <button
           type='button'
           onClick={() => navigate("/savings-goals")}
-          className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary'
+          className='w-full rounded-xl border border-surface-border bg-surface px-4 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary sm:w-auto'
         >
           Back to Goals
         </button>
@@ -218,7 +218,7 @@ export function SavingsGoalDetailPage() {
 
       {goal.data ? (
         <>
-          <section className='grid gap-4 md:grid-cols-4'>
+          <section className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
             <MetricCard
               label='Current'
               value={formatCurrency(goal.data.currentAmount)}
@@ -237,9 +237,9 @@ export function SavingsGoalDetailPage() {
             />
           </section>
 
-          <section className='grid gap-6 lg:grid-cols-[1fr_1fr]'>
+          <section className='grid gap-6 md:grid-cols-[1fr_1fr]'>
             <div className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
-              <div className='mb-4 flex items-center justify-between'>
+              <div className='mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                 <h2 className='font-headline text-xl font-bold'>
                   Goal Settings
                 </h2>
@@ -247,7 +247,7 @@ export function SavingsGoalDetailPage() {
                   type='button'
                   onClick={handleMarkComplete}
                   disabled={markComplete.isPending || goal.data.status === 3}
-                  className='rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90 disabled:opacity-60'
+                  className='w-full rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90 disabled:opacity-60 sm:w-auto'
                 >
                   Mark Complete
                 </button>
@@ -332,7 +332,7 @@ export function SavingsGoalDetailPage() {
                 <button
                   type='submit'
                   disabled={updateGoal.isPending}
-                  className='rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+                  className='w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
                 >
                   {updateGoal.isPending ? "Saving..." : "Save Changes"}
                 </button>
@@ -393,7 +393,7 @@ export function SavingsGoalDetailPage() {
                 <button
                   type='submit'
                   disabled={addContribution.isPending}
-                  className='rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+                  className='w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
                 >
                   {addContribution.isPending ? "Saving..." : "Add Contribution"}
                 </button>
@@ -435,7 +435,7 @@ export function SavingsGoalDetailPage() {
                       key={item.id}
                       className='rounded-xl border border-surface-border bg-surface-muted p-3'
                     >
-                      <div className='flex items-center justify-between gap-3'>
+                      <div className='flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3'>
                         <p className='font-semibold'>
                           {formatCurrency(item.amount)}
                         </p>
@@ -450,12 +450,12 @@ export function SavingsGoalDetailPage() {
                   ))}
                 </div>
 
-                <div className='mt-4 flex items-center justify-between text-sm'>
+                <div className='mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between'>
                   <span className='text-text-secondary'>
                     Page {contributions.data.page} of {totalPages} (
                     {contributions.data.totalCount} total)
                   </span>
-                  <div className='flex gap-2'>
+                  <div className='grid grid-cols-2 gap-2 sm:flex'>
                     <button
                       type='button'
                       disabled={page <= 1}
@@ -511,11 +511,16 @@ function Field({
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
+    <div className='min-w-0 rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
       <p className='text-xs font-bold uppercase tracking-[0.16em] text-text-muted'>
         {label}
       </p>
-      <p className='mt-2 text-2xl font-bold'>{value}</p>
+      <p
+        className='mt-2 break-words text-xl font-bold leading-tight sm:text-2xl'
+        title={value}
+      >
+        {value}
+      </p>
     </div>
   );
 }

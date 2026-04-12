@@ -90,12 +90,12 @@ export function AccountsPage() {
   return (
     <>
       <section className='space-y-6'>
-        <header className='flex flex-wrap items-start justify-between gap-4'>
+        <header className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
           <div>
             <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
               Accounts
             </p>
-            <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+            <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
               Accounts Overview
             </h1>
             <p className='mt-2 text-text-secondary'>
@@ -105,7 +105,7 @@ export function AccountsPage() {
           <button
             type='button'
             onClick={() => setIsCreateOpen(true)}
-            className='rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90'
+            className='w-full rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto'
           >
             Add New Account
           </button>
@@ -143,9 +143,14 @@ export function AccountsPage() {
                         key={account.id}
                         className='rounded-xl border border-surface-border bg-surface-muted p-3'
                       >
-                        <div className='flex items-center justify-between gap-3'>
-                          <div>
-                            <p className='font-semibold'>{account.name}</p>
+                        <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3'>
+                          <div className='min-w-0'>
+                            <p
+                              className='truncate font-semibold'
+                              title={account.name}
+                            >
+                              {account.name}
+                            </p>
                             <p className='text-xs text-text-muted'>
                               Type: {accountTypeLabel(account.type)}
                             </p>
@@ -157,7 +162,7 @@ export function AccountsPage() {
                         <button
                           type='button'
                           onClick={() => setSelectedAccountId(account.id)}
-                          className='mt-3 rounded-lg border border-surface-border bg-surface px-3 py-1.5 text-xs font-semibold text-text-secondary hover:text-text-primary'
+                          className='mt-3 w-full rounded-lg border border-surface-border bg-surface px-3 py-2 text-xs font-semibold text-text-secondary hover:text-text-primary sm:w-auto sm:py-1.5'
                         >
                           Reconcile
                         </button>
@@ -165,11 +170,11 @@ export function AccountsPage() {
                     ))}
                   </div>
 
-                  <div className='mt-4 flex items-center justify-between text-sm'>
+                  <div className='mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between'>
                     <span className='text-text-secondary'>
                       Page {page} of {totalPages} ({accounts.data.length} total)
                     </span>
-                    <div className='flex gap-2'>
+                    <div className='grid grid-cols-2 gap-2 sm:flex'>
                       <button
                         type='button'
                         disabled={page <= 1}
@@ -321,18 +326,18 @@ export function AccountsPage() {
                 />
               ) : null}
 
-              <div className='flex items-center justify-end gap-3 pt-2'>
+              <div className='flex flex-col gap-2 pt-2 sm:flex-row sm:items-center sm:justify-end'>
                 <button
                   type='button'
                   onClick={() => setIsCreateOpen(false)}
-                  className='rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary'
+                  className='w-full rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary sm:w-auto'
                 >
                   Cancel
                 </button>
                 <button
                   type='submit'
                   disabled={createAccount.isPending}
-                  className='rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+                  className='w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
                 >
                   {createAccount.isPending ? "Saving..." : "Create Account"}
                 </button>

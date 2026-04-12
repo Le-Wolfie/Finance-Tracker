@@ -89,18 +89,18 @@ export function ReportsPage() {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-wrap items-end justify-between gap-4'>
+      <header className='flex flex-col gap-4 md:flex-row md:items-end md:justify-between'>
         <div>
           <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
             Analytics
           </p>
-          <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+          <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
             Financial Reports
           </h1>
           <p className='mt-2 text-text-secondary'>{monthLabel(year, month)}</p>
         </div>
 
-        <div className='flex items-center gap-2'>
+        <div className='grid grid-cols-2 gap-2 sm:flex sm:items-center'>
           <select
             value={month}
             onChange={(event) => setMonth(Number(event.target.value))}
@@ -152,7 +152,7 @@ export function ReportsPage() {
       ) : null}
 
       {summaryData ? (
-        <div className='grid gap-4 md:grid-cols-4'>
+        <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
           <MetricCard
             label='Income'
             value={formatCurrency(summaryData.totalIncome)}
@@ -172,23 +172,25 @@ export function ReportsPage() {
         </div>
       ) : null}
 
-      <div className='grid gap-6 xl:grid-cols-2'>
+      <div className='grid gap-6 lg:grid-cols-2'>
         <ChartCard title='Income vs Expenses'>
           {incomeVsExpenseData.length > 0 ? (
-            <ResponsiveContainer width='100%' height={300}>
-              <BarChart data={incomeVsExpenseData}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
-                <XAxis dataKey='name' />
-                <YAxis />
-                <Tooltip
-                  formatter={(value) => formatCurrency(Number(value ?? 0))}
-                />
-                <Bar dataKey='value' radius={[6, 6, 0, 0]}>
-                  <Cell fill='#10b981' />
-                  <Cell fill='#ef4444' />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <div className='h-[220px] sm:h-[260px] md:h-[300px]'>
+              <ResponsiveContainer width='100%' height='100%'>
+                <BarChart data={incomeVsExpenseData}>
+                  <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
+                  <XAxis dataKey='name' />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(Number(value ?? 0))}
+                  />
+                  <Bar dataKey='value' radius={[6, 6, 0, 0]}>
+                    <Cell fill='#10b981' />
+                    <Cell fill='#ef4444' />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
             <EmptyState
               compact
@@ -200,16 +202,16 @@ export function ReportsPage() {
 
         <ChartCard title='Category Breakdown'>
           {breakdownData.length > 0 ? (
-            <div className='grid gap-3 md:grid-cols-[0.9fr_1.1fr]'>
-              <div className='h-[300px]'>
+            <div className='grid gap-3 lg:grid-cols-[0.9fr_1.1fr]'>
+              <div className='h-[220px] sm:h-[260px] md:h-[300px]'>
                 <ResponsiveContainer width='100%' height='100%'>
                   <PieChart>
                     <Pie
                       data={breakdownData}
                       dataKey='amount'
                       nameKey='categoryName'
-                      innerRadius={50}
-                      outerRadius={90}
+                      innerRadius={40}
+                      outerRadius={75}
                       paddingAngle={3}
                     >
                       {breakdownData.map((entry, index) => (
@@ -225,7 +227,7 @@ export function ReportsPage() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className='max-h-[300px] space-y-2 overflow-y-auto pr-1'>
+              <div className='max-h-[260px] space-y-2 overflow-y-auto pr-1 sm:max-h-[300px]'>
                 {breakdownData.map((item, index) => (
                   <div
                     key={item.categoryId}
@@ -264,23 +266,25 @@ export function ReportsPage() {
         </ChartCard>
       </div>
 
-      <div className='grid gap-6 xl:grid-cols-2'>
+      <div className='grid gap-6 lg:grid-cols-2'>
         <ChartCard title='Top Account Balances'>
           {accountBalanceData.length > 0 ? (
-            <ResponsiveContainer width='100%' height={320}>
-              <BarChart data={accountBalanceData}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
-                <XAxis dataKey='name' />
-                <YAxis />
-                <Tooltip
-                  formatter={(value) => formatCurrency(Number(value ?? 0))}
-                  labelFormatter={(label, payload) =>
-                    String(payload?.[0]?.payload?.fullName ?? label)
-                  }
-                />
-                <Bar dataKey='balance' fill='#3b82f6' radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className='h-[240px] sm:h-[280px] md:h-[320px]'>
+              <ResponsiveContainer width='100%' height='100%'>
+                <BarChart data={accountBalanceData}>
+                  <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
+                  <XAxis dataKey='name' />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(Number(value ?? 0))}
+                    labelFormatter={(label, payload) =>
+                      String(payload?.[0]?.payload?.fullName ?? label)
+                    }
+                  />
+                  <Bar dataKey='balance' fill='#3b82f6' radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
             <EmptyState
               compact
@@ -292,24 +296,26 @@ export function ReportsPage() {
 
         <ChartCard title='Budget Usage Alerts'>
           {budgetUsageData.length > 0 ? (
-            <ResponsiveContainer width='100%' height={320}>
-              <BarChart data={budgetUsageData}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
-                <XAxis dataKey='name' />
-                <YAxis domain={[0, 120]} />
-                <Tooltip
-                  formatter={(value) => `${Number(value ?? 0).toFixed(2)}%`}
-                  labelFormatter={(label, payload) =>
-                    String(payload?.[0]?.payload?.fullName ?? label)
-                  }
-                />
-                <Bar
-                  dataKey='usagePercent'
-                  fill='#f59e0b'
-                  radius={[6, 6, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className='h-[240px] sm:h-[280px] md:h-[320px]'>
+              <ResponsiveContainer width='100%' height='100%'>
+                <BarChart data={budgetUsageData}>
+                  <CartesianGrid strokeDasharray='3 3' stroke='#d5dbe5' />
+                  <XAxis dataKey='name' />
+                  <YAxis domain={[0, 120]} />
+                  <Tooltip
+                    formatter={(value) => `${Number(value ?? 0).toFixed(2)}%`}
+                    labelFormatter={(label, payload) =>
+                      String(payload?.[0]?.payload?.fullName ?? label)
+                    }
+                  />
+                  <Bar
+                    dataKey='usagePercent'
+                    fill='#f59e0b'
+                    radius={[6, 6, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
             <EmptyState
               compact
@@ -320,7 +326,7 @@ export function ReportsPage() {
         </ChartCard>
       </div>
 
-      <section className='grid gap-6 xl:grid-cols-2'>
+      <section className='grid gap-6 lg:grid-cols-2'>
         <article className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
           <h2 className='font-headline text-xl font-bold'>Detailed Insights</h2>
           {summaryData ? (
@@ -371,10 +377,10 @@ export function ReportsPage() {
                   key={item.id}
                   className='rounded-xl border border-surface-border bg-surface-muted p-3 text-sm'
                 >
-                  <div className='flex items-center justify-between gap-2'>
+                  <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                     <span
                       title={item.name}
-                      className='max-w-[220px] truncate font-semibold'
+                      className='max-w-[220px] truncate font-semibold sm:max-w-[250px]'
                     >
                       {item.name}
                     </span>
@@ -413,11 +419,16 @@ export function ReportsPage() {
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
+    <div className='min-w-0 rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
       <p className='text-xs font-bold uppercase tracking-[0.16em] text-text-muted'>
         {label}
       </p>
-      <p className='mt-2 text-2xl font-bold'>{value}</p>
+      <p
+        className='mt-2 break-words text-xl font-bold leading-tight sm:text-2xl'
+        title={value}
+      >
+        {value}
+      </p>
     </div>
   );
 }

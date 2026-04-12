@@ -121,12 +121,12 @@ export function TransactionsPage() {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-wrap items-start justify-between gap-4'>
+      <header className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
         <div>
           <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
             Ledger
           </p>
-          <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+          <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
             Transaction Ledger
           </h1>
           <p className='mt-2 text-text-secondary'>
@@ -135,14 +135,14 @@ export function TransactionsPage() {
         </div>
         <Link
           to='/transactions/new'
-          className='rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90'
+          className='w-full rounded-xl bg-primary px-5 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto'
         >
           New Transaction
         </Link>
       </header>
 
       <section className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
-        <div className='grid gap-3 md:grid-cols-5'>
+        <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-5'>
           <input
             type='date'
             value={from}
@@ -250,7 +250,64 @@ export function TransactionsPage() {
             </div>
           ) : (
             <>
-              <div className='overflow-x-auto'>
+              <div className='space-y-3 p-4 md:hidden'>
+                {paginatedItems.map((item) => (
+                  <article
+                    key={item.id}
+                    className='rounded-xl border border-surface-border bg-surface-muted p-4'
+                  >
+                    <div className='flex items-start justify-between gap-3'>
+                      <div className='min-w-0'>
+                        <p className='truncate text-sm font-semibold'>
+                          {item.description || "-"}
+                        </p>
+                        <p className='mt-1 text-xs text-text-secondary'>
+                          {formatDate(item.date)}
+                        </p>
+                      </div>
+                      <span
+                        className={`text-sm font-semibold ${item.type === 1 ? "text-success" : "text-danger"}`}
+                      >
+                        {item.type === 1 ? "+" : "-"}
+                        {formatCurrency(item.amount)}
+                      </span>
+                    </div>
+                    <div className='mt-3 grid grid-cols-2 gap-2 text-xs text-text-secondary'>
+                      <span>{transactionTypeLabel(item.type)}</span>
+                      <span className='truncate text-right'>
+                        {item.categoryId
+                          ? (categoryById.get(item.categoryId) ?? "Unknown")
+                          : "-"}
+                      </span>
+                    </div>
+                    <div className='mt-3 grid grid-cols-2 gap-2'>
+                      <Link
+                        to={`/transactions/${item.id}/edit`}
+                        state={{ transaction: item }}
+                        className='rounded-lg border border-surface-border bg-surface px-3 py-2 text-center text-xs font-semibold text-text-secondary transition hover:text-text-primary'
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        type='button'
+                        onClick={() =>
+                          setPendingDelete({
+                            id: item.id,
+                            description: item.description || "(No description)",
+                            amount: item.amount,
+                          })
+                        }
+                        disabled={deleteMutation.isPending}
+                        className='rounded-lg border border-surface-border bg-surface px-3 py-2 text-xs font-semibold text-text-secondary transition hover:text-danger disabled:opacity-60'
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className='hidden overflow-x-auto md:block'>
                 <table className='min-w-full text-sm'>
                   <thead>
                     <tr className='border-b border-surface-border bg-surface-muted text-left text-xs uppercase tracking-[0.14em] text-text-muted'>
@@ -316,12 +373,12 @@ export function TransactionsPage() {
                 </table>
               </div>
 
-              <div className='flex items-center justify-between px-4 py-3 text-sm'>
+              <div className='flex flex-col gap-3 px-4 py-3 text-sm md:flex-row md:items-center md:justify-between'>
                 <span className='text-text-secondary'>
                   Page {page} of {totalPages} ({filteredItems.length} shown)
                 </span>
                 {totalPages > 1 ? (
-                  <div className='flex gap-2'>
+                  <div className='grid grid-cols-2 gap-2 md:flex'>
                     <button
                       type='button'
                       disabled={page <= 1}

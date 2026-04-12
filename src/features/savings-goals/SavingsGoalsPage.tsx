@@ -162,7 +162,7 @@ export function SavingsGoalsPage() {
         <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
           Savings
         </p>
-        <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+        <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
           Savings Goals
         </h1>
         <p className='mt-2 text-text-secondary'>
@@ -170,7 +170,7 @@ export function SavingsGoalsPage() {
         </p>
       </header>
 
-      <section className='grid gap-4 md:grid-cols-4'>
+      <section className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
         <MetricCard
           label='Active Goals'
           value={String(summary.data?.activeGoalsCount ?? 0)}
@@ -291,9 +291,9 @@ export function SavingsGoalsPage() {
       </section>
 
       <section className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
-        <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
+        <div className='mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
           <h2 className='font-headline text-xl font-bold'>Goal Portfolio</h2>
-          <div className='flex flex-wrap items-center gap-2'>
+          <div className='grid grid-cols-1 gap-2 sm:grid-cols-2'>
             <input
               type='search'
               value={searchTerm}
@@ -357,8 +357,10 @@ export function SavingsGoalsPage() {
                   to={`/savings-goals/${goal.id}`}
                   className='block rounded-xl border border-surface-border bg-surface-muted p-4 transition hover:border-primary/40'
                 >
-                  <div className='flex items-center justify-between gap-3'>
-                    <p className='font-semibold'>{goal.name}</p>
+                  <div className='flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3'>
+                    <p className='truncate font-semibold' title={goal.name}>
+                      {goal.name}
+                    </p>
                     <span className='text-xs font-semibold text-text-muted'>
                       {savingsGoalStatusLabel(goal.status)}
                     </span>
@@ -366,7 +368,7 @@ export function SavingsGoalsPage() {
                   <p className='mt-1 text-sm text-text-secondary'>
                     {goal.description || "No description"}
                   </p>
-                  <div className='mt-3 grid gap-2 text-sm md:grid-cols-4'>
+                  <div className='mt-3 grid grid-cols-2 gap-2 text-sm lg:grid-cols-4'>
                     <StatRow
                       label='Current'
                       value={formatCurrency(goal.currentAmount)}
@@ -388,12 +390,12 @@ export function SavingsGoalsPage() {
               ))}
             </div>
 
-            <div className='mt-4 flex items-center justify-between text-sm'>
+            <div className='mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between'>
               <span className='text-text-secondary'>
                 Page {page} of {totalPages} ({filteredGoals.length} shown)
               </span>
               {totalPages > 1 ? (
-                <div className='flex gap-2'>
+                <div className='grid grid-cols-2 gap-2 sm:flex'>
                   <button
                     type='button'
                     disabled={page <= 1}
@@ -448,11 +450,16 @@ function Field({
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
+    <div className='min-w-0 rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
       <p className='text-xs font-bold uppercase tracking-[0.16em] text-text-muted'>
         {label}
       </p>
-      <p className='mt-2 text-2xl font-bold'>{value}</p>
+      <p
+        className='mt-2 break-words text-xl font-bold leading-tight sm:text-2xl'
+        title={value}
+      >
+        {value}
+      </p>
     </div>
   );
 }

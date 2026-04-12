@@ -77,34 +77,34 @@ export function BudgetsPage() {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-wrap items-start justify-between gap-4'>
+      <header className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
         <div>
           <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
             Budgeting
           </p>
-          <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+          <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
             Budget Command Center
           </h1>
           <p className='mt-2 text-text-secondary'>{monthLabel(year, month)}</p>
         </div>
 
-        <div className='flex flex-wrap gap-2'>
+        <div className='grid grid-cols-1 gap-2 sm:grid-cols-2'>
           <Link
             to='/budgets/templates'
-            className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary'
+            className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-center text-sm font-semibold text-text-secondary transition hover:text-text-primary'
           >
             Manage Templates
           </Link>
           <Link
             to='/budgets/rollover-history'
-            className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary'
+            className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-center text-sm font-semibold text-text-secondary transition hover:text-text-primary'
           >
             Rollover History
           </Link>
         </div>
       </header>
 
-      <div className='grid gap-6 lg:grid-cols-[1fr_1fr]'>
+      <div className='grid gap-6 md:grid-cols-[1fr_1fr]'>
         <section className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
           <h2 className='mb-4 font-headline text-xl font-bold'>
             Set Monthly Budget
@@ -162,7 +162,7 @@ export function BudgetsPage() {
             <button
               type='submit'
               disabled={setBudget.isPending}
-              className='rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+              className='w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
             >
               {setBudget.isPending ? "Saving..." : "Save Budget"}
             </button>
@@ -279,8 +279,13 @@ export function BudgetsPage() {
                 key={alert.budgetId}
                 className='rounded-xl border border-surface-border bg-surface-muted p-3'
               >
-                <div className='flex items-center justify-between gap-3'>
-                  <p className='font-semibold'>{alert.categoryName}</p>
+                <div className='flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3'>
+                  <p
+                    className='truncate font-semibold'
+                    title={alert.categoryName}
+                  >
+                    {alert.categoryName}
+                  </p>
                   <span
                     className={`text-xs font-semibold ${alert.isExceeded ? "text-danger" : "text-text-muted"}`}
                   >

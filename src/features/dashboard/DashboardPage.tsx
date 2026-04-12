@@ -57,7 +57,7 @@ export function DashboardPage() {
         <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
           Overview
         </p>
-        <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+        <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
           Financial Overview
         </h1>
         <p className='mt-2 text-text-secondary'>
@@ -65,7 +65,7 @@ export function DashboardPage() {
         </p>
       </header>
 
-      <div className='grid gap-4 md:grid-cols-3'>
+      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         <MetricCard
           label='Total Income'
           value={formatCurrency(data.summary.totalIncome)}
@@ -99,10 +99,12 @@ export function DashboardPage() {
               pagedAccounts.map((account) => (
                 <div
                   key={account.id}
-                  className='flex items-center justify-between rounded-xl border border-surface-border bg-surface-muted px-4 py-3'
+                  className='flex flex-col gap-2 rounded-xl border border-surface-border bg-surface-muted px-4 py-3 sm:flex-row sm:items-center sm:justify-between'
                 >
-                  <div>
-                    <p className='font-semibold'>{account.name}</p>
+                  <div className='min-w-0'>
+                    <p className='truncate font-semibold' title={account.name}>
+                      {account.name}
+                    </p>
                     <p className='text-xs text-text-muted'>
                       Type: {account.type}
                     </p>
@@ -116,12 +118,12 @@ export function DashboardPage() {
           </div>
 
           {data.accounts.length > accountsPageSize ? (
-            <div className='mt-4 flex items-center justify-between text-sm'>
+            <div className='mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between'>
               <span className='text-text-secondary'>
                 Page {visibleAccountsPage} of {accountsTotalPages} (
                 {data.accounts.length} total)
               </span>
-              <div className='flex gap-2'>
+              <div className='grid grid-cols-2 gap-2 sm:flex'>
                 <button
                   type='button'
                   disabled={visibleAccountsPage <= 1}
@@ -197,8 +199,13 @@ export function DashboardPage() {
                   key={alert.budgetId}
                   className='rounded-xl border border-surface-border bg-surface-muted p-3'
                 >
-                  <div className='flex items-center justify-between'>
-                    <p className='font-semibold'>{alert.categoryName}</p>
+                  <div className='flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between'>
+                    <p
+                      className='truncate font-semibold'
+                      title={alert.categoryName}
+                    >
+                      {alert.categoryName}
+                    </p>
                     <p className='text-xs font-semibold text-text-muted'>
                       {formatPercent(alert.usagePercent)}
                     </p>
