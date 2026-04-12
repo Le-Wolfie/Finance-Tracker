@@ -32,7 +32,7 @@ export function SettingsPage() {
         <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
           Preferences
         </p>
-        <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+        <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
           Settings
         </h1>
         <p className='mt-2 text-text-secondary'>
@@ -40,7 +40,7 @@ export function SettingsPage() {
         </p>
       </header>
 
-      <div className='grid gap-6 lg:grid-cols-[1fr_1fr]'>
+      <div className='grid gap-6 md:grid-cols-[1fr_1fr]'>
         <section className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
           <h2 className='mb-4 font-headline text-xl font-bold'>
             Monthly Rollover Operation
@@ -49,7 +49,7 @@ export function SettingsPage() {
             Trigger budget rollover manually for {monthLabel(year, month)}.
           </p>
 
-          <div className='grid gap-3 md:grid-cols-2'>
+          <div className='grid gap-3 sm:grid-cols-2'>
             <select
               value={month}
               onChange={(event) => setMonth(Number(event.target.value))}
@@ -97,7 +97,7 @@ export function SettingsPage() {
             type='button'
             onClick={handleRunRollover}
             disabled={runRollover.isPending}
-            className='mt-4 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+            className='mt-4 w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
           >
             {runRollover.isPending ? "Running..." : "Run Budget Rollover"}
           </button>
@@ -150,7 +150,7 @@ export function SettingsPage() {
             <button
               type='button'
               onClick={logout}
-              className='mt-3 rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary transition hover:text-danger'
+              className='mt-3 w-full rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary transition hover:text-danger sm:w-auto'
             >
               Sign Out
             </button>
