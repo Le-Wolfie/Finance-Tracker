@@ -94,7 +94,7 @@ export function AuthPage() {
             Track spending, monitor budgets, and plan ahead with a clean and
             reliable finance workspace.
           </p>
-          <div className='grid grid-cols-2 gap-4 pt-8'>
+          <div className='grid grid-cols-1 gap-4 pt-8 xl:grid-cols-2'>
             <div className='rounded-xl border border-white/15 bg-white/5 p-6 backdrop-blur-md'>
               <ShieldCheck className='mb-3 h-6 w-6 text-emerald-300' />
               <h3 className='font-semibold'>Secure Session</h3>
@@ -121,7 +121,7 @@ export function AuthPage() {
         </div>
       </section>
 
-      <section className='flex w-full items-center justify-center bg-surface px-6 py-10 lg:w-1/2 lg:px-20'>
+      <section className='flex w-full items-center justify-center bg-surface px-4 py-8 sm:px-6 sm:py-10 lg:w-1/2 lg:px-20'>
         <div className='w-full max-w-md'>
           <div className='mb-10 lg:hidden'>
             <div className='mb-8 flex items-center gap-3'>
@@ -135,7 +135,7 @@ export function AuthPage() {
           </div>
 
           <div className='mb-8'>
-            <h2 className='font-headline text-4xl font-extrabold tracking-tight'>
+            <h2 className='font-headline text-3xl font-extrabold tracking-tight sm:text-4xl'>
               {mode === "login" ? "Welcome back" : "Create your account"}
             </h2>
             <p className='mt-2 text-text-secondary'>
