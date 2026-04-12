@@ -71,7 +71,7 @@ export function CategoriesPage() {
         <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
           Category Settings
         </p>
-        <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+        <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
           Categories Management
         </h1>
         <p className='mt-2 text-text-secondary'>
@@ -80,7 +80,7 @@ export function CategoriesPage() {
         </p>
       </header>
 
-      <div className='grid gap-6 xl:grid-cols-[1.1fr_1fr]'>
+      <div className='grid gap-6 lg:grid-cols-[1.1fr_1fr]'>
         <article className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
           <h2 className='font-headline text-xl font-bold'>Add Category</h2>
           <p className='mt-1 text-sm text-text-secondary'>
@@ -167,8 +167,8 @@ export function CategoriesPage() {
           ) : null}
 
           {categories.data ? (
-            <div className='mt-5 max-h-[65vh] overflow-hidden'>
-              <div className='grid h-full gap-4 overflow-y-auto pr-1 md:grid-cols-2'>
+            <div className='mt-5'>
+              <div className='grid gap-4 pr-1 sm:grid-cols-2'>
                 <CategoryListCard
                   title={categoryTypeLabel(1)}
                   items={incomeCategories.map((category) => category.name)}
@@ -198,7 +198,7 @@ function CategoryListCard({
   accent: string;
 }) {
   return (
-    <section className='flex h-full flex-col rounded-xl border border-surface-border bg-surface-muted p-4'>
+    <section className='flex h-full max-h-[32vh] flex-col overflow-hidden rounded-xl border border-surface-border bg-surface-muted p-4 sm:max-h-[58vh]'>
       <div className='mb-3 flex items-center justify-between'>
         <h3 className='text-sm font-bold text-text-primary'>{title}</h3>
         <span
@@ -209,11 +209,12 @@ function CategoryListCard({
       </div>
 
       {items.length ? (
-        <ul className='max-h-[50vh] space-y-2 overflow-y-auto pr-1'>
+        <ul className='min-h-0 flex-1 space-y-2 overflow-y-auto pr-1'>
           {items.map((item) => (
             <li
               key={`${title}-${item}`}
-              className='rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm font-medium text-text-secondary'
+              className='truncate rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm font-medium text-text-secondary'
+              title={item}
             >
               {item}
             </li>
