@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
 export function toApiError(error: unknown): string {
   if (axios.isAxiosError<ApiError>(error)) {
     if (!error.response) {
-      return `Cannot connect to API at ${apiClient.defaults.baseURL}. Ensure FinancialTracker.API is running.`;
+      return `Cannot connect to API`;
     }
 
     return (
