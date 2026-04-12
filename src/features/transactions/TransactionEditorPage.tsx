@@ -168,7 +168,7 @@ export function TransactionEditorPage() {
         <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
           Transaction Form
         </p>
-        <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+        <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
           {isEditMode ? "Edit Transaction" : "New Transaction"}
         </h1>
         <p className='mt-2 text-text-secondary'>
@@ -305,11 +305,11 @@ export function TransactionEditorPage() {
           </div>
         )}
 
-        <div className='mt-6 flex items-center justify-end gap-3'>
+        <div className='mt-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end'>
           <button
             type='button'
             onClick={() => navigate("/transactions")}
-            className='rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary'
+            className='w-full rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary sm:w-auto'
           >
             Cancel
           </button>
@@ -323,7 +323,7 @@ export function TransactionEditorPage() {
                   transactionDetail.isLoading ||
                   transactionDetail.isError))
             }
-            className='rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+            className='w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
           >
             {createTransaction.isPending || updateTransaction.isPending
               ? "Saving..."
