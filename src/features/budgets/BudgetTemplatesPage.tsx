@@ -172,12 +172,12 @@ export function BudgetTemplatesPage() {
 
   return (
     <section className='space-y-6'>
-      <header className='flex flex-wrap items-start justify-between gap-4'>
+      <header className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
         <div>
           <p className='mb-2 text-xs font-bold uppercase tracking-[0.18em] text-text-muted'>
             Budget Templates
           </p>
-          <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
+          <h1 className='font-headline text-3xl font-extrabold tracking-tight md:text-4xl'>
             Template Library
           </h1>
           <p className='mt-2 text-text-secondary'>
@@ -187,13 +187,13 @@ export function BudgetTemplatesPage() {
 
         <Link
           to='/budgets'
-          className='rounded-xl border border-surface-border bg-surface px-4 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary'
+          className='w-full rounded-xl border border-surface-border bg-surface px-4 py-2 text-center text-sm font-semibold text-text-secondary transition hover:text-text-primary sm:w-auto'
         >
           Back to Budgets
         </Link>
       </header>
 
-      <div className='grid gap-6 lg:grid-cols-[1fr_1fr]'>
+      <div className='grid gap-6 md:grid-cols-[1fr_1fr]'>
         <section className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
           <h2 className='mb-4 font-headline text-xl font-bold'>
             {editingTemplateId ? "Edit Template" : "Create Template"}
@@ -280,11 +280,11 @@ export function BudgetTemplatesPage() {
               />
             )}
 
-            <div className='flex flex-wrap gap-2'>
+            <div className='grid grid-cols-1 gap-2 sm:flex sm:flex-wrap'>
               <button
                 type='submit'
                 disabled={createTemplate.isPending || updateTemplate.isPending}
-                className='rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+                className='w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
               >
                 {createTemplate.isPending || updateTemplate.isPending
                   ? "Saving..."
@@ -296,7 +296,7 @@ export function BudgetTemplatesPage() {
                 <button
                   type='button'
                   onClick={resetEditor}
-                  className='rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary'
+                  className='w-full rounded-xl border border-surface-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary sm:w-auto'
                 >
                   Cancel Edit
                 </button>
@@ -352,7 +352,7 @@ export function BudgetTemplatesPage() {
             <button
               type='submit'
               disabled={applyTemplate.isPending}
-              className='rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70'
+              className='w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-70 sm:w-auto'
             >
               {applyTemplate.isPending ? "Applying..." : "Apply Template"}
             </button>
@@ -393,9 +393,11 @@ export function BudgetTemplatesPage() {
                 key={template.id}
                 className='rounded-xl border border-surface-border bg-surface-muted p-4'
               >
-                <div className='flex flex-wrap items-start justify-between gap-3'>
-                  <div>
-                    <p className='font-semibold'>{template.name}</p>
+                <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
+                  <div className='min-w-0'>
+                    <p className='truncate font-semibold' title={template.name}>
+                      {template.name}
+                    </p>
                     <p className='text-xs text-text-muted'>
                       {categoryById.get(template.categoryId) ??
                         "Unknown Category"}
