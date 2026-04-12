@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   EmptyState,
@@ -19,8 +20,17 @@ export function TransactionsPage() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: string;
+    description: string;
+    amount: number;
+  } | null>(null);
   const pageSize = 10;
+  const isSearching = searchTerm.trim().length > 0;
+  const queryPage = isSearching ? 1 : page;
+  const queryPageSize = isSearching ? 100 : pageSize;
 
   const queryClient = useQueryClient();
   const categories = useCategoriesQuery();
@@ -30,13 +40,15 @@ export function TransactionsPage() {
       from: from ? new Date(`${from}T00:00:00`).toISOString() : undefined,
       to: to ? new Date(`${to}T23:59:59`).toISOString() : undefined,
       categoryId: categoryId || undefined,
-      page,
-      pageSize,
+      page: queryPage,
+      pageSize: queryPageSize,
     }),
-    [categoryId, from, page, to],
+    [categoryId, from, queryPage, queryPageSize, to],
   );
 
-  const transactions = useTransactionsQuery(filter);
+  const isInvalidDateRange = Boolean(from && to && from > to);
+
+  const transactions = useTransactionsQuery(filter, !isInvalidDateRange);
   const deleteMutation = useDeleteTransactionMutation();
 
   const categoryById = useMemo(
@@ -44,12 +56,59 @@ export function TransactionsPage() {
     [categories.data],
   );
 
-  const totalPages = transactions.data
-    ? Math.max(
-        1,
-        Math.ceil(transactions.data.totalCount / transactions.data.pageSize),
-      )
-    : 1;
+  const filteredItems = useMemo(() => {
+    if (!transactions.data) {
+      return [];
+    }
+
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) {
+      return transactions.data.items;
+    }
+
+    return transactions.data.items.filter((item) => {
+      const categoryName = item.categoryId
+        ? (categoryById.get(item.categoryId) ?? "unknown")
+        : "uncategorized";
+
+      const haystack = [
+        item.description,
+        categoryName,
+        transactionTypeLabel(item.type),
+        formatDate(item.date),
+        String(item.amount),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(term);
+    });
+  }, [transactions.data, searchTerm, categoryById]);
+
+  const totalPages = useMemo(() => {
+    if (!transactions.data) {
+      return 1;
+    }
+
+    if (isSearching) {
+      return Math.max(1, Math.ceil(filteredItems.length / pageSize));
+    }
+
+    return Math.max(
+      1,
+      Math.ceil(transactions.data.totalCount / transactions.data.pageSize),
+    );
+  }, [filteredItems.length, isSearching, pageSize, transactions.data]);
+
+  const paginatedItems = useMemo(() => {
+    if (!isSearching) {
+      return filteredItems;
+    }
+
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    return filteredItems.slice(start, end);
+  }, [filteredItems, isSearching, page, pageSize]);
 
   const handleDelete = async (transactionId: string) => {
     await deleteMutation.mutateAsync(transactionId);
@@ -83,10 +142,12 @@ export function TransactionsPage() {
       </header>
 
       <section className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
-        <div className='grid gap-3 md:grid-cols-4'>
+        <div className='grid gap-3 md:grid-cols-5'>
           <input
             type='date'
             value={from}
+            title='From date: show transactions on or after this date.'
+            aria-label='From date filter'
             onChange={(event) => {
               setFrom(event.target.value);
               setPage(1);
@@ -96,6 +157,8 @@ export function TransactionsPage() {
           <input
             type='date'
             value={to}
+            title='To date: show transactions on or before this date.'
+            aria-label='To date filter'
             onChange={(event) => {
               setTo(event.target.value);
               setPage(1);
@@ -104,6 +167,8 @@ export function TransactionsPage() {
           />
           <select
             value={categoryId}
+            title='Category filter: show only transactions for the selected category.'
+            aria-label='Category filter'
             onChange={(event) => {
               setCategoryId(event.target.value);
               setPage(1);
@@ -117,12 +182,26 @@ export function TransactionsPage() {
               </option>
             ))}
           </select>
+          <input
+            type='search'
+            value={searchTerm}
+            title='Search transactions by description, type, category, date, or amount.'
+            aria-label='Transaction search'
+            placeholder='Search transactions...'
+            onChange={(event) => {
+              setSearchTerm(event.target.value);
+              setPage(1);
+            }}
+            className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
+          />
           <button
             type='button'
+            title='Reset date and category filters.'
             onClick={() => {
               setFrom("");
               setTo("");
               setCategoryId("");
+              setSearchTerm("");
               setPage(1);
             }}
             className='rounded-xl border border-surface-border bg-surface px-3 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary'
@@ -132,26 +211,41 @@ export function TransactionsPage() {
         </div>
       </section>
 
-      {transactions.isLoading ? (
+      {isInvalidDateRange ? (
+        <ErrorState
+          title='Invalid date range'
+          message='From date must be on or before To date. Adjust the dates and try again.'
+        />
+      ) : null}
+
+      {!isInvalidDateRange && transactions.isLoading ? (
         <LoadingState
           title='Loading transactions'
           message='Fetching your latest ledger activity.'
         />
       ) : null}
-      {transactions.isError ? (
+      {!isInvalidDateRange && transactions.isError ? (
         <ErrorState
           title='Transactions unavailable'
           message={toApiError(transactions.error)}
         />
       ) : null}
 
-      {transactions.data ? (
+      {!isInvalidDateRange && transactions.data ? (
         <section className='rounded-2xl border border-surface-border bg-surface shadow-soft'>
-          {transactions.data.items.length === 0 ? (
+          {filteredItems.length === 0 ? (
             <div className='p-6'>
               <EmptyState
-                title='No transactions found'
-                message='Try adjusting filters or add a new transaction to populate this ledger.'
+                title={
+                  searchTerm
+                    ? "No matching transactions"
+                    : "No transactions found"
+                }
+                message={
+                  searchTerm
+                    ? "No transactions match your search. Try another term or clear filters."
+                    : "Try adjusting filters or add a new transaction to populate this ledger."
+                }
               />
             </div>
           ) : (
@@ -169,7 +263,7 @@ export function TransactionsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {transactions.data.items.map((item) => (
+                    {paginatedItems.map((item) => (
                       <tr
                         key={item.id}
                         className='border-b border-surface-border'
@@ -201,7 +295,14 @@ export function TransactionsPage() {
                             </Link>
                             <button
                               type='button'
-                              onClick={() => handleDelete(item.id)}
+                              onClick={() =>
+                                setPendingDelete({
+                                  id: item.id,
+                                  description:
+                                    item.description || "(No description)",
+                                  amount: item.amount,
+                                })
+                              }
                               disabled={deleteMutation.isPending}
                               className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 text-xs font-semibold text-text-secondary transition hover:text-danger disabled:opacity-60'
                             >
@@ -217,34 +318,77 @@ export function TransactionsPage() {
 
               <div className='flex items-center justify-between px-4 py-3 text-sm'>
                 <span className='text-text-secondary'>
-                  Page {transactions.data.page} of {totalPages} (
-                  {transactions.data.totalCount} total)
+                  Page {page} of {totalPages} ({filteredItems.length} shown)
                 </span>
-                <div className='flex gap-2'>
-                  <button
-                    type='button'
-                    disabled={page <= 1}
-                    onClick={() => setPage((value) => Math.max(1, value - 1))}
-                    className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
-                  >
-                    Prev
-                  </button>
-                  <button
-                    type='button'
-                    disabled={page >= totalPages}
-                    onClick={() =>
-                      setPage((value) => Math.min(totalPages, value + 1))
-                    }
-                    className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
-                  >
-                    Next
-                  </button>
-                </div>
+                {totalPages > 1 ? (
+                  <div className='flex gap-2'>
+                    <button
+                      type='button'
+                      disabled={page <= 1}
+                      onClick={() => setPage((value) => Math.max(1, value - 1))}
+                      className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
+                    >
+                      Prev
+                    </button>
+                    <button
+                      type='button'
+                      disabled={page >= totalPages}
+                      onClick={() =>
+                        setPage((value) => Math.min(totalPages, value + 1))
+                      }
+                      className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
+                    >
+                      Next
+                    </button>
+                  </div>
+                ) : null}
               </div>
             </>
           )}
         </section>
       ) : null}
+
+      {pendingDelete && typeof document !== "undefined"
+        ? createPortal(
+            <div className='fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4'>
+              <section className='w-full max-w-md rounded-2xl border border-surface-border bg-surface p-5 shadow-2xl'>
+                <h2 className='font-headline text-xl font-bold'>
+                  Delete Transaction?
+                </h2>
+                <p className='mt-2 text-sm text-text-secondary'>
+                  This action cannot be undone.
+                </p>
+                <div className='mt-4 rounded-xl border border-surface-border bg-surface-muted p-3 text-sm'>
+                  <p className='font-semibold'>{pendingDelete.description}</p>
+                  <p className='text-text-secondary'>
+                    {formatCurrency(pendingDelete.amount)}
+                  </p>
+                </div>
+                <div className='mt-5 flex items-center justify-end gap-2'>
+                  <button
+                    type='button'
+                    onClick={() => setPendingDelete(null)}
+                    className='rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm font-semibold text-text-secondary'
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type='button'
+                    onClick={async () => {
+                      await handleDelete(pendingDelete.id);
+                      setPendingDelete(null);
+                    }}
+                    disabled={deleteMutation.isPending}
+                    className='rounded-lg bg-danger px-3 py-2 text-sm font-semibold text-white disabled:opacity-70'
+                  >
+                    {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
+              </section>
+            </div>,
+            document.body,
+          )
+        : null}
     </section>
   );
 }

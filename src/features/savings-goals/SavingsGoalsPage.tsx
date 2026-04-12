@@ -53,8 +53,12 @@ export function SavingsGoalsPage() {
   const [statusFilter, setStatusFilter] = useState<"" | "1" | "2" | "3" | "4">(
     "",
   );
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const isSearching = searchTerm.trim().length > 0;
+  const queryPage = isSearching ? 1 : page;
+  const queryPageSize = isSearching ? 100 : pageSize;
 
   const accounts = useAccountsQuery();
   const summary = useSavingsGoalsSummaryQuery();
@@ -62,8 +66,8 @@ export function SavingsGoalsPage() {
     status: statusFilter
       ? (Number(statusFilter) as SavingsGoalStatus)
       : undefined,
-    page,
-    pageSize,
+    page: queryPage,
+    pageSize: queryPageSize,
   });
 
   const createGoal = useCreateSavingsGoalMutation();
@@ -81,13 +85,50 @@ export function SavingsGoalsPage() {
     },
   });
 
+  const filteredGoals = useMemo(() => {
+    const items = goals.data?.items ?? [];
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) {
+      return items;
+    }
+
+    return items.filter((goal) => {
+      const haystack = [
+        goal.name,
+        goal.description,
+        savingsGoalStatusLabel(goal.status),
+        formatDate(goal.targetDate),
+        String(goal.currentAmount),
+        String(goal.targetAmount),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(term);
+    });
+  }, [goals.data?.items, searchTerm]);
+
   const totalPages = useMemo(() => {
     if (!goals.data) {
       return 1;
     }
 
+    if (isSearching) {
+      return Math.max(1, Math.ceil(filteredGoals.length / pageSize));
+    }
+
     return Math.max(1, Math.ceil(goals.data.totalCount / goals.data.pageSize));
-  }, [goals.data]);
+  }, [filteredGoals.length, goals.data, isSearching, pageSize]);
+
+  const paginatedGoals = useMemo(() => {
+    if (!isSearching) {
+      return filteredGoals;
+    }
+
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    return filteredGoals.slice(start, end);
+  }, [filteredGoals, isSearching, page, pageSize]);
 
   const submitHandler = form.handleSubmit(async (values) => {
     await createGoal.mutateAsync({
@@ -252,20 +293,34 @@ export function SavingsGoalsPage() {
       <section className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
         <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
           <h2 className='font-headline text-xl font-bold'>Goal Portfolio</h2>
-          <select
-            value={statusFilter}
-            onChange={(event) => {
-              setStatusFilter(event.target.value as "" | "1" | "2" | "3" | "4");
-              setPage(1);
-            }}
-            className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
-          >
-            <option value=''>All Statuses</option>
-            <option value='1'>Active</option>
-            <option value='2'>Paused</option>
-            <option value='3'>Completed</option>
-            <option value='4'>Archived</option>
-          </select>
+          <div className='flex flex-wrap items-center gap-2'>
+            <input
+              type='search'
+              value={searchTerm}
+              onChange={(event) => {
+                setSearchTerm(event.target.value);
+                setPage(1);
+              }}
+              placeholder='Search goals...'
+              className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
+            />
+            <select
+              value={statusFilter}
+              onChange={(event) => {
+                setStatusFilter(
+                  event.target.value as "" | "1" | "2" | "3" | "4",
+                );
+                setPage(1);
+              }}
+              className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
+            >
+              <option value=''>All Statuses</option>
+              <option value='1'>Active</option>
+              <option value='2'>Paused</option>
+              <option value='3'>Completed</option>
+              <option value='4'>Archived</option>
+            </select>
+          </div>
         </div>
 
         {goals.isLoading ? (
@@ -282,17 +337,21 @@ export function SavingsGoalsPage() {
           />
         ) : null}
 
-        {goals.data && goals.data.items.length === 0 ? (
+        {goals.data && filteredGoals.length === 0 ? (
           <EmptyState
-            title='No goals found'
-            message='Create your first savings goal to start tracking progress.'
+            title={searchTerm ? "No matching goals" : "No goals found"}
+            message={
+              searchTerm
+                ? "No goals match your search. Try another term."
+                : "Create your first savings goal to start tracking progress."
+            }
           />
         ) : null}
 
-        {goals.data && goals.data.items.length > 0 ? (
+        {goals.data && filteredGoals.length > 0 ? (
           <>
             <div className='space-y-3'>
-              {goals.data.items.map((goal) => (
+              {paginatedGoals.map((goal) => (
                 <Link
                   key={goal.id}
                   to={`/savings-goals/${goal.id}`}
@@ -331,29 +390,30 @@ export function SavingsGoalsPage() {
 
             <div className='mt-4 flex items-center justify-between text-sm'>
               <span className='text-text-secondary'>
-                Page {goals.data.page} of {totalPages} ({goals.data.totalCount}{" "}
-                total)
+                Page {page} of {totalPages} ({filteredGoals.length} shown)
               </span>
-              <div className='flex gap-2'>
-                <button
-                  type='button'
-                  disabled={page <= 1}
-                  onClick={() => setPage((value) => Math.max(1, value - 1))}
-                  className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
-                >
-                  Prev
-                </button>
-                <button
-                  type='button'
-                  disabled={page >= totalPages}
-                  onClick={() =>
-                    setPage((value) => Math.min(totalPages, value + 1))
-                  }
-                  className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
-                >
-                  Next
-                </button>
-              </div>
+              {totalPages > 1 ? (
+                <div className='flex gap-2'>
+                  <button
+                    type='button'
+                    disabled={page <= 1}
+                    onClick={() => setPage((value) => Math.max(1, value - 1))}
+                    className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type='button'
+                    disabled={page >= totalPages}
+                    onClick={() =>
+                      setPage((value) => Math.min(totalPages, value + 1))
+                    }
+                    className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
+                  >
+                    Next
+                  </button>
+                </div>
+              ) : null}
             </div>
           </>
         ) : null}

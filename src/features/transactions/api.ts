@@ -113,10 +113,14 @@ async function deleteTransaction(transactionId: string): Promise<void> {
   await apiClient.delete(`/transactions/${transactionId}`);
 }
 
-export function useTransactionsQuery(filter: TransactionFilter) {
+export function useTransactionsQuery(
+  filter: TransactionFilter,
+  enabled = true,
+) {
   return useQuery({
     queryKey: ["transactions", filter],
     queryFn: () => getTransactions(filter),
+    enabled,
   });
 }
 
