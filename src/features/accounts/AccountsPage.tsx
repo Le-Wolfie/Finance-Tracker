@@ -39,10 +39,20 @@ export function AccountsPage() {
     string | undefined
   >();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
 
   const accounts = useAccountsQuery();
   const reconciliation = useAccountReconciliationQuery(selectedAccountId);
   const createAccount = useCreateAccountMutation();
+
+  const totalPages = accounts.data
+    ? Math.max(1, Math.ceil(accounts.data.length / pageSize))
+    : 1;
+
+  const pagedAccounts = accounts.data
+    ? accounts.data.slice((page - 1) * pageSize, page * pageSize)
+    : [];
 
   const form = useForm<CreateAccountFormValues>({
     resolver: zodResolver(createAccountSchema),
@@ -73,6 +83,8 @@ export function AccountsPage() {
       queryClient.invalidateQueries({ queryKey: ["reports"] }),
       queryClient.invalidateQueries({ queryKey: ["dashboard"] }),
     ]);
+
+    setPage(1);
   });
 
   return (
@@ -84,10 +96,10 @@ export function AccountsPage() {
               Accounts
             </p>
             <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
-              Precision Portfolio
+              Accounts Overview
             </h1>
             <p className='mt-2 text-text-secondary'>
-              Review balances and run ledger reconciliation per account.
+              View balances and run reconciliation for each account.
             </p>
           </div>
           <button
@@ -124,33 +136,63 @@ export function AccountsPage() {
                   message='Add your first account to begin tracking balances.'
                 />
               ) : (
-                <div className='space-y-3'>
-                  {accounts.data.map((account) => (
-                    <div
-                      key={account.id}
-                      className='rounded-xl border border-surface-border bg-surface-muted p-3'
-                    >
-                      <div className='flex items-center justify-between gap-3'>
-                        <div>
-                          <p className='font-semibold'>{account.name}</p>
-                          <p className='text-xs text-text-muted'>
-                            Type: {accountTypeLabel(account.type)}
+                <>
+                  <div className='space-y-3'>
+                    {pagedAccounts.map((account) => (
+                      <div
+                        key={account.id}
+                        className='rounded-xl border border-surface-border bg-surface-muted p-3'
+                      >
+                        <div className='flex items-center justify-between gap-3'>
+                          <div>
+                            <p className='font-semibold'>{account.name}</p>
+                            <p className='text-xs text-text-muted'>
+                              Type: {accountTypeLabel(account.type)}
+                            </p>
+                          </div>
+                          <p className='font-semibold'>
+                            {formatCurrency(account.balance)}
                           </p>
                         </div>
-                        <p className='font-semibold'>
-                          {formatCurrency(account.balance)}
-                        </p>
+                        <button
+                          type='button'
+                          onClick={() => setSelectedAccountId(account.id)}
+                          className='mt-3 rounded-lg border border-surface-border bg-surface px-3 py-1.5 text-xs font-semibold text-text-secondary hover:text-text-primary'
+                        >
+                          Reconcile
+                        </button>
                       </div>
+                    ))}
+                  </div>
+
+                  <div className='mt-4 flex items-center justify-between text-sm'>
+                    <span className='text-text-secondary'>
+                      Page {page} of {totalPages} ({accounts.data.length} total)
+                    </span>
+                    <div className='flex gap-2'>
                       <button
                         type='button'
-                        onClick={() => setSelectedAccountId(account.id)}
-                        className='mt-3 rounded-lg border border-surface-border bg-surface px-3 py-1.5 text-xs font-semibold text-text-secondary hover:text-text-primary'
+                        disabled={page <= 1}
+                        onClick={() =>
+                          setPage((value) => Math.max(1, value - 1))
+                        }
+                        className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
                       >
-                        Reconcile
+                        Prev
+                      </button>
+                      <button
+                        type='button'
+                        disabled={page >= totalPages}
+                        onClick={() =>
+                          setPage((value) => Math.min(totalPages, value + 1))
+                        }
+                        className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
+                      >
+                        Next
                       </button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                </>
               )}
             </section>
 
