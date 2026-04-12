@@ -1,5 +1,5 @@
 import { AlertTriangle, PiggyBank, Repeat, Wallet } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   EmptyState,
   ErrorState,
@@ -19,6 +19,13 @@ export function DashboardPage() {
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
   const dashboard = useDashboardQuery(year, month);
+  const [accountsPage, setAccountsPage] = useState(1);
+  const accountsPageSize = 5;
+  const accountsTotalPages = Math.max(
+    1,
+    Math.ceil((dashboard.data?.accounts.length ?? 0) / accountsPageSize),
+  );
+  const visibleAccountsPage = Math.min(accountsPage, accountsTotalPages);
 
   if (dashboard.isLoading) {
     return (
@@ -39,6 +46,10 @@ export function DashboardPage() {
   }
 
   const data = dashboard.data;
+  const pagedAccounts = data.accounts.slice(
+    (visibleAccountsPage - 1) * accountsPageSize,
+    visibleAccountsPage * accountsPageSize,
+  );
 
   return (
     <section className='space-y-6'>
@@ -47,7 +58,7 @@ export function DashboardPage() {
           Overview
         </p>
         <h1 className='font-headline text-4xl font-extrabold tracking-tight'>
-          Global Wealth Position
+          Financial Overview
         </h1>
         <p className='mt-2 text-text-secondary'>
           Month: {monthLabel(year, month)}
@@ -85,7 +96,7 @@ export function DashboardPage() {
                 message='Create an account to start tracking balances in this period.'
               />
             ) : (
-              data.accounts.map((account) => (
+              pagedAccounts.map((account) => (
                 <div
                   key={account.id}
                   className='flex items-center justify-between rounded-xl border border-surface-border bg-surface-muted px-4 py-3'
@@ -103,6 +114,39 @@ export function DashboardPage() {
               ))
             )}
           </div>
+
+          {data.accounts.length > accountsPageSize ? (
+            <div className='mt-4 flex items-center justify-between text-sm'>
+              <span className='text-text-secondary'>
+                Page {visibleAccountsPage} of {accountsTotalPages} (
+                {data.accounts.length} total)
+              </span>
+              <div className='flex gap-2'>
+                <button
+                  type='button'
+                  disabled={visibleAccountsPage <= 1}
+                  onClick={() =>
+                    setAccountsPage((value) => Math.max(1, value - 1))
+                  }
+                  className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
+                >
+                  Prev
+                </button>
+                <button
+                  type='button'
+                  disabled={visibleAccountsPage >= accountsTotalPages}
+                  onClick={() =>
+                    setAccountsPage((value) =>
+                      Math.min(accountsTotalPages, value + 1),
+                    )
+                  }
+                  className='rounded-lg border border-surface-border bg-surface px-3 py-1.5 font-semibold text-text-secondary disabled:opacity-50'
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          ) : null}
         </section>
 
         <section className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
