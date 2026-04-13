@@ -14,6 +14,8 @@ export type CreateCategoryPayload = {
   type: CategoryType;
 };
 
+export type UpdateCategoryPayload = CreateCategoryPayload;
+
 async function getCategories(): Promise<Category[]> {
   const response = await apiClient.get<Category[]>("/categories");
   return response.data;
@@ -26,6 +28,21 @@ async function createCategory(
   return response.data;
 }
 
+async function updateCategory({
+  id,
+  payload,
+}: {
+  id: string;
+  payload: UpdateCategoryPayload;
+}): Promise<Category> {
+  const response = await apiClient.put<Category>(`/categories/${id}`, payload);
+  return response.data;
+}
+
+async function deleteCategory(id: string): Promise<void> {
+  await apiClient.delete(`/categories/${id}`);
+}
+
 export function useCategoriesQuery() {
   return useQuery({
     queryKey: ["categories"],
@@ -36,6 +53,18 @@ export function useCategoriesQuery() {
 export function useCreateCategoryMutation() {
   return useMutation({
     mutationFn: createCategory,
+  });
+}
+
+export function useUpdateCategoryMutation() {
+  return useMutation({
+    mutationFn: updateCategory,
+  });
+}
+
+export function useDeleteCategoryMutation() {
+  return useMutation({
+    mutationFn: deleteCategory,
   });
 }
 
