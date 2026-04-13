@@ -128,7 +128,7 @@ export function CategoriesPage() {
         </p>
       </header>
 
-      <div className='grid gap-6 lg:grid-cols-[1.1fr_1fr]'>
+      <div className='grid gap-6 xl:grid-cols-[1.1fr_1fr]'>
         <article className='rounded-2xl border border-surface-border bg-surface p-6 shadow-soft'>
           <h2 className='font-headline text-xl font-bold'>
             {editingCategoryId ? "Edit Category" : "Add Category"}
@@ -241,7 +241,7 @@ export function CategoriesPage() {
 
           {categories.data ? (
             <div className='mt-5'>
-              <div className='grid gap-4 pr-1 sm:grid-cols-2'>
+              <div className='grid gap-4 pr-1'>
                 <CategoryListCard
                   title={categoryTypeLabel(1)}
                   items={incomeCategories}
@@ -337,14 +337,14 @@ function CategoryListCard({
               className='rounded-lg border border-surface-border bg-surface px-3 py-2 text-sm font-medium text-text-secondary'
               title={item.name}
             >
-              <div className='flex items-center justify-between gap-2'>
+              <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                 <span className='truncate'>{item.name}</span>
-                <div className='flex items-center gap-1'>
+                <div className='flex w-full items-center gap-1 sm:w-auto'>
                   <button
                     type='button'
                     disabled={disableActions}
                     onClick={() => onEdit(item.id, item.name, item.type)}
-                    className='rounded-md border border-surface-border px-2 py-1 text-xs font-semibold transition hover:text-text-primary disabled:opacity-60'
+                    className='flex-1 rounded-md border border-surface-border px-2 py-1 text-xs font-semibold transition hover:text-text-primary disabled:opacity-60 sm:flex-none'
                   >
                     Edit
                   </button>
@@ -352,7 +352,7 @@ function CategoryListCard({
                     type='button'
                     disabled={disableActions}
                     onClick={() => onDelete(item.id, item.name)}
-                    className='rounded-md border border-surface-border px-2 py-1 text-xs font-semibold transition hover:text-danger disabled:opacity-60'
+                    className='flex-1 rounded-md border border-surface-border px-2 py-1 text-xs font-semibold transition hover:text-danger disabled:opacity-60 sm:flex-none'
                   >
                     Delete
                   </button>
