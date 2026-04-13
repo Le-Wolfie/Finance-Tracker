@@ -179,4 +179,3 @@ Default local frontend URL:
 
 - CORS development origins are configured in `FinancialTracker.API/appsettings.Development.json`.
 - Frontend and backend are currently maintained as separate folders with their own setup.
-- Deployment documentation will be added later.
