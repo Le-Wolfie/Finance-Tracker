@@ -280,6 +280,11 @@ export function TransactionsPage() {
                           : "-"}
                       </span>
                     </div>
+                    {!item.isBalanceApplied ? (
+                      <p className='mt-2 text-xs font-semibold text-amber-600'>
+                        Scheduled: applies on {formatDate(item.date)}
+                      </p>
+                    ) : null}
                     <div className='mt-3 grid grid-cols-2 gap-2'>
                       <Link
                         to={`/transactions/${item.id}/edit`}
@@ -315,6 +320,7 @@ export function TransactionsPage() {
                       <th className='px-4 py-3'>Description</th>
                       <th className='px-4 py-3'>Type</th>
                       <th className='px-4 py-3'>Category</th>
+                      <th className='px-4 py-3'>Status</th>
                       <th className='px-4 py-3'>Amount</th>
                       <th className='px-4 py-3'>Actions</th>
                     </tr>
@@ -334,6 +340,17 @@ export function TransactionsPage() {
                           {item.categoryId
                             ? (categoryById.get(item.categoryId) ?? "Unknown")
                             : "-"}
+                        </td>
+                        <td className='px-4 py-3'>
+                          {item.isBalanceApplied ? (
+                            <span className='text-xs font-semibold text-emerald-600'>
+                              Applied
+                            </span>
+                          ) : (
+                            <span className='text-xs font-semibold text-amber-600'>
+                              Scheduled
+                            </span>
+                          )}
                         </td>
                         <td
                           className={`px-4 py-3 font-semibold ${item.type === 1 ? "text-success" : "text-danger"}`}

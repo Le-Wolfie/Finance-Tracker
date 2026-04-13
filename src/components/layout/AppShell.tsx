@@ -60,29 +60,31 @@ function SidebarContent({ email, logout, onNavigate }: SidebarContentProps) {
         </span>
       </Link>
 
-      <nav className='space-y-2'>
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={onNavigate}
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-semibold transition",
-                  isActive
-                    ? "bg-surface-muted text-primary"
-                    : "text-text-secondary hover:bg-surface-muted hover:text-text-primary",
-                )
-              }
-            >
-              <Icon className='h-5 w-5' />
-              <span>{item.label}</span>
-            </NavLink>
-          );
-        })}
-      </nav>
+      <div className='min-h-0 flex-1 overflow-y-auto pr-1'>
+        <nav className='space-y-2'>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 rounded-xl px-4 py-3.5 text-base font-semibold transition",
+                    isActive
+                      ? "bg-surface-muted text-primary"
+                      : "text-text-secondary hover:bg-surface-muted hover:text-text-primary",
+                  )
+                }
+              >
+                <Icon className='h-5 w-5' />
+                <span>{item.label}</span>
+              </NavLink>
+            );
+          })}
+        </nav>
+      </div>
 
       <Link
         to='/transactions/new'
@@ -148,7 +150,7 @@ export function AppShell({ children }: AppShellProps) {
   }, [isMobileMenuOpen]);
 
   return (
-    <div className='min-h-screen bg-background text-text-primary'>
+    <div className='min-h-screen bg-background text-text-primary lg:h-screen lg:overflow-hidden'>
       {isMobileMenuOpen ? (
         <button
           type='button'
@@ -164,7 +166,7 @@ export function AppShell({ children }: AppShellProps) {
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className='flex h-full flex-col p-5'>
+        <div className='flex h-full min-h-0 flex-col p-5'>
           <div className='mb-3 flex justify-end'>
             <button
               type='button'
@@ -184,12 +186,12 @@ export function AppShell({ children }: AppShellProps) {
       </aside>
 
       <aside className='fixed left-0 top-0 hidden h-screen w-64 border-r border-surface-border bg-surface lg:block'>
-        <div className='flex h-full flex-col p-5'>
+        <div className='flex h-full min-h-0 flex-col p-5'>
           <SidebarContent email={email} logout={logout} />
         </div>
       </aside>
 
-      <div className='lg:ml-64'>
+      <div className='flex min-h-screen flex-col lg:ml-64 lg:h-screen'>
         <header className='sticky top-0 z-20 border-b border-surface-border bg-surface/95 backdrop-blur'>
           <div className='mx-auto flex h-16 max-w-[1400px] items-center px-4 sm:px-6 lg:px-8'>
             <button
@@ -209,8 +211,10 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </header>
 
-        <main className='mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8'>
-          {children}
+        <main className='min-h-0 flex-1 overflow-y-auto'>
+          <div className='mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8'>
+            {children}
+          </div>
         </main>
       </div>
     </div>

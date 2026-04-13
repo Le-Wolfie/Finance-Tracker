@@ -18,6 +18,7 @@ import {
 const transactionSchema = z
   .object({
     type: z.enum(["1", "2", "3"]),
+    executionMode: z.enum(["1", "2"]),
     accountId: z.string().min(1, "Account is required."),
     destinationAccountId: z.string().optional(),
     categoryId: z.string().optional(),
@@ -86,6 +87,7 @@ export function TransactionEditorPage() {
     mode: "onBlur",
     defaultValues: {
       type: "2",
+      executionMode: "1",
       accountId: "",
       destinationAccountId: "",
       categoryId: "",
@@ -100,8 +102,14 @@ export function TransactionEditorPage() {
     name: "type",
     defaultValue: "2",
   });
+  const watchedDate = useWatch({
+    control: form.control,
+    name: "date",
+  });
 
   const selectedType = Number(watchedType) as 1 | 2 | 3;
+  const todayDate = new Date().toISOString().slice(0, 10);
+  const isFutureDate = Boolean(watchedDate && watchedDate > todayDate);
   const allowedCategoryType = categoryTypeForTransaction(selectedType);
 
   const filteredCategories = useMemo(() => {
@@ -123,6 +131,9 @@ export function TransactionEditorPage() {
 
     form.reset({
       type: String(transactionDetail.data.type) as "1" | "2" | "3",
+      executionMode: String(transactionDetail.data.executionMode ?? 1) as
+        | "1"
+        | "2",
       accountId: transactionDetail.data.accountId,
       destinationAccountId: transactionDetail.data.destinationAccountId ?? "",
       categoryId: transactionDetail.data.categoryId ?? "",
@@ -131,6 +142,12 @@ export function TransactionEditorPage() {
       description: transactionDetail.data.description ?? "",
     });
   }, [form, isEditMode, transactionDetail.data]);
+
+  useEffect(() => {
+    if (!isFutureDate) {
+      form.setValue("executionMode", "1", { shouldDirty: true });
+    }
+  }, [form, isFutureDate]);
 
   const submitHandler = form.handleSubmit(async (values) => {
     const payload = {
@@ -143,6 +160,7 @@ export function TransactionEditorPage() {
         values.type === "3" ? undefined : values.categoryId || undefined,
       amount: Number(values.amount),
       type: Number(values.type) as 1 | 2 | 3,
+      executionMode: Number(values.executionMode) as 1 | 2,
       date: new Date(`${values.date}T12:00:00`).toISOString(),
       description: values.description || "",
     };
@@ -274,6 +292,40 @@ export function TransactionEditorPage() {
               className='w-full rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
             />
           </Field>
+
+          {isFutureDate ? (
+            <div className='md:col-span-2'>
+              <Field
+                label='When should this affect account balance?'
+                error={form.formState.errors.executionMode?.message}
+              >
+                <div className='grid gap-2 sm:grid-cols-2'>
+                  <label className='flex cursor-pointer items-center gap-2 rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'>
+                    <input
+                      type='radio'
+                      value='1'
+                      {...form.register("executionMode")}
+                    />
+                    Apply now
+                  </label>
+                  <label className='flex cursor-pointer items-center gap-2 rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'>
+                    <input
+                      type='radio'
+                      value='2'
+                      {...form.register("executionMode")}
+                    />
+                    Apply on scheduled date
+                  </label>
+                </div>
+              </Field>
+            </div>
+          ) : (
+            <input
+              type='hidden'
+              value='1'
+              {...form.register("executionMode")}
+            />
+          )}
 
           <div className='md:col-span-2'>
             <Field

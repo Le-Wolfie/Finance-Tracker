@@ -3,6 +3,7 @@ import { apiClient } from "../../lib/api/client";
 
 export type TransactionType = 1 | 2 | 3;
 export type CategoryType = 1 | 2;
+export type TransactionExecutionMode = 1 | 2;
 
 export type TransactionItem = {
   id: string;
@@ -12,6 +13,9 @@ export type TransactionItem = {
   categoryId?: string | null;
   amount: number;
   type: TransactionType;
+  executionMode: TransactionExecutionMode;
+  isBalanceApplied: boolean;
+  balanceAppliedAt?: string | null;
   date: string;
   description: string;
   createdAt: string;
@@ -44,6 +48,7 @@ export type UpsertTransactionPayload = {
   categoryId?: string;
   amount: number;
   type: TransactionType;
+  executionMode: TransactionExecutionMode;
   date: string;
   description: string;
 };
