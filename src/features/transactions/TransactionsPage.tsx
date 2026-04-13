@@ -142,72 +142,94 @@ export function TransactionsPage() {
       </header>
 
       <section className='rounded-2xl border border-surface-border bg-surface p-5 shadow-soft'>
-        <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-5'>
-          <input
-            type='date'
-            value={from}
-            title='From date: show transactions on or after this date.'
-            aria-label='From date filter'
-            onChange={(event) => {
-              setFrom(event.target.value);
-              setPage(1);
-            }}
-            className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
-          />
-          <input
-            type='date'
-            value={to}
-            title='To date: show transactions on or before this date.'
-            aria-label='To date filter'
-            onChange={(event) => {
-              setTo(event.target.value);
-              setPage(1);
-            }}
-            className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
-          />
-          <select
-            value={categoryId}
-            title='Category filter: show only transactions for the selected category.'
-            aria-label='Category filter'
-            onChange={(event) => {
-              setCategoryId(event.target.value);
-              setPage(1);
-            }}
-            className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
-          >
-            <option value=''>All Categories</option>
-            {(categories.data ?? []).map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-          <input
-            type='search'
-            value={searchTerm}
-            title='Search transactions by description, type, category, date, or amount.'
-            aria-label='Transaction search'
-            placeholder='Search transactions...'
-            onChange={(event) => {
-              setSearchTerm(event.target.value);
-              setPage(1);
-            }}
-            className='rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
-          />
-          <button
-            type='button'
-            title='Reset date and category filters.'
-            onClick={() => {
-              setFrom("");
-              setTo("");
-              setCategoryId("");
-              setSearchTerm("");
-              setPage(1);
-            }}
-            className='rounded-xl border border-surface-border bg-surface px-3 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary'
-          >
-            Clear Filters
-          </button>
+        <div className='space-y-3'>
+          <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-5'>
+            <div>
+              <label className='mb-1 block text-xs font-medium text-text-secondary lg:hidden'>
+                From Date
+              </label>
+              <input
+                type='date'
+                value={from}
+                title='From date: show transactions on or after this date.'
+                aria-label='From date filter'
+                onChange={(event) => {
+                  setFrom(event.target.value);
+                  setPage(1);
+                }}
+                className='w-full rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
+              />
+            </div>
+            <div>
+              <label className='mb-1 block text-xs font-medium text-text-secondary lg:hidden'>
+                To Date
+              </label>
+              <input
+                type='date'
+                value={to}
+                title='To date: show transactions on or before this date.'
+                aria-label='To date filter'
+                onChange={(event) => {
+                  setTo(event.target.value);
+                  setPage(1);
+                }}
+                className='w-full rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
+              />
+            </div>
+            <div>
+              <label className='mb-1 block text-xs font-medium text-text-secondary lg:hidden'>
+                Category
+              </label>
+              <select
+                value={categoryId}
+                title='Category filter: show only transactions for the selected category.'
+                aria-label='Category filter'
+                onChange={(event) => {
+                  setCategoryId(event.target.value);
+                  setPage(1);
+                }}
+                className='w-full rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
+              >
+                <option value=''>All Categories</option>
+                {(categories.data ?? []).map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className='mb-1 block text-xs font-medium text-text-secondary lg:hidden'>
+                Search
+              </label>
+              <input
+                type='search'
+                value={searchTerm}
+                title='Search transactions by description, type, category, date, or amount.'
+                aria-label='Transaction search'
+                placeholder='Search transactions...'
+                onChange={(event) => {
+                  setSearchTerm(event.target.value);
+                  setPage(1);
+                }}
+                className='w-full rounded-xl border border-surface-border bg-surface-muted px-3 py-2 text-sm'
+              />
+            </div>
+            <button
+              type='button'
+              title='Reset date and category filters.'
+              onClick={() => {
+                setFrom("");
+                setTo("");
+                setCategoryId("");
+                setSearchTerm("");
+                setPage(1);
+              }}
+              className='rounded-xl border border-surface-border bg-surface px-3 py-2 text-sm font-semibold text-text-secondary transition hover:text-text-primary lg:col-auto'
+            >
+              Clear Filters
+            </button>
+          </div>
         </div>
       </section>
 
