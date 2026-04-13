@@ -39,7 +39,6 @@ You can:
 
 - CRUD transaction flow (including delete confirmation)
 - Server-side filtering by date/category
-- Search + pagination behavior fixed in frontend
 - Edit flow supports deep link loading by transaction id
 
 ### Budgets
@@ -54,7 +53,6 @@ You can:
 - Create goals tied to accounts
 - Contribution tracking
 - Goal summary metrics
-- Search + pagination behavior fixed in frontend
 
 ### Recurring Transactions
 
@@ -62,7 +60,6 @@ You can:
 - Pause/resume/execute actions
 - Execution history view
 - Delete confirmation modal
-- Search + pagination behavior fixed in frontend
 
 ### Reporting
 
