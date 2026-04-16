@@ -37,7 +37,7 @@ You can:
 
 ### Transactions
 
-- CRUD transaction flow (including delete confirmation)
+- CRUD transaction flow
 - Server-side filtering by date/category
 - Edit flow supports deep link loading by transaction id
 
@@ -59,7 +59,6 @@ You can:
 - Create recurring rules
 - Pause/resume/execute actions
 - Execution history view
-- Delete confirmation modal
 
 ### Reporting
 
@@ -99,16 +98,14 @@ You can:
 Finance Tracker/
   FinancialTracker.API/        # .NET backend
     Features/                  # Domain feature modules (Auth, Accounts, etc.)
-    scripts/                   # Smoke tests and seed scripts
-    .env.example
-  frontend/                    # React frontend
+
+                    # React frontend
     src/
       app/                     # Router and app-level setup
       features/                # Page/feature modules
       components/              # Shared UI
       lib/                     # API/auth/util helpers
     .env.example
-  Finance Tracker.sln
 ```
 
 ## Local Setup
@@ -173,9 +170,3 @@ npm run dev
 Default local frontend URL:
 
 - `http://localhost:5173`
-
-
-## Notes
-
-- CORS development origins are configured in `FinancialTracker.API/appsettings.Development.json`.
-- Frontend and backend are currently maintained as separate folders with their own setup.
